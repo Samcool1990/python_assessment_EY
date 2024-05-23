@@ -1,36 +1,25 @@
-from multiprocessing import Pool
+from fastapi import APIRouter, HTTPException
 from datetime import datetime
-import logging
+from app.models.request_models import AdditionRequest
+from app.models.response_models import AdditionResponse
+from app.services.addition_service import perform_addition
 
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
+router = APIRouter()
 
-def add_lists(lists):
-    try:
-        return [sum(lst) for lst in lists]
-    except Exception as e:
-        logger.error(f"Error in addition: {e}")
-        return None
-
-def process_addition(lists):
-    with Pool() as pool:
-        results = pool.map(sum, lists)
-    return results
-
-def perform_addition(batchcid, payload):
+@router.post("/add", response_model=AdditionResponse)
+async def add_numbers(request: AdditionRequest):
     started_at = datetime.utcnow()
     try:
-        response = process_addition(payload)
-        status = "complete"
+        result = perform_addition(request.payload)
     except Exception as e:
-        logger.error(f"Error processing batch {batchcid}: {e}")
-        response = []
-        status = "error"
+        raise HTTPException(status_code=500, detail=str(e))
+    
     completed_at = datetime.utcnow()
-    return {
-        "batchcid": batchcid,
-        "response": response,
-        "status": status,
-        "started_at": started_at,
-        "completed_at": completed_at
-    }
+    response = AdditionResponse(
+        batchid=request.batchid,
+        response=result,
+        status="complete",
+        started_at=started_at,
+        completed_at=completed_at
+    )
+    return response

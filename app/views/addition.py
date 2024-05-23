@@ -1,12 +1,12 @@
-from fastapi import APIRouter, HTTPException
-from app.models.request_response import AdditionRequest, AdditionResponse
-from app.controller.addition_controller import perform_addition
+# app/views.py
 
-router = APIRouter()
+from multiprocessing import Pool
+from typing import List
 
-@router.post("/add", response_model=AdditionResponse)
-async def add_numbers(request: AdditionRequest):
-    result = perform_addition(request.batchcid, request.payload)
-    if result["status"] == "error":
-        raise HTTPException(status_code=500, detail="Internal Server Error")
-    return result
+def add_lists(lists: List[List[int]]) -> List[int]:
+    return [sum(lst) for lst in lists]
+
+def perform_addition(payload: List[List[int]]) -> List[int]:
+    with Pool() as pool:
+        result = pool.map(add_lists, [payload])
+    return result[0]

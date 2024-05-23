@@ -1,10 +1,10 @@
 from fastapi import FastAPI
-from app.views import addition
+from app.controller import addition_controller
 
 app = FastAPI()
 
-app.include_router(addition.router, prefix="/api/v1", tags=["addition"])
+app.include_router(addition_controller.router)
 
-@app.get("/")
-async def root():
-    return {"message": "Welcome to the FastAPI application"}
+if __name__ == "__main__":
+    import uvicorn
+    uvicorn.run(app, host="0.0.0.0", port=8000)
