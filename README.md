@@ -1,4 +1,4 @@
-Python 3.11.0 should be installed on system  
+Python 3.11.0 & GIT should be installed on system  
 
 1. Go to proper directory & open git bash/command line
 2. type command "git clone 'Http address of the repo'"
