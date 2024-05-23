@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException
 from datetime import datetime
 from app.models.request_models import AdditionRequest
 from app.models.response_models import AdditionResponse
-from app.services.addition_service import perform_addition
+from app.views.addition import perform_addition
 
 router = APIRouter()
 
