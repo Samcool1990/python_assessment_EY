@@ -29,5 +29,3 @@ async def add_numbers(request: AdditionRequest):
     )
     return response
 
-
-
