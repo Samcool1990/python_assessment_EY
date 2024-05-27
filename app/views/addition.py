@@ -21,7 +21,7 @@ async def add_numbers(request: AdditionRequest):
 
     completed_at = datetime.utcnow()
     response = AdditionResponse(
-        bathcid=request.bathcid,
+        batchid=request.batchid,
         response=return_dict['result'],
         status="complete",
         started_at=started_at,
