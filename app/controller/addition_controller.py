@@ -1,25 +1,18 @@
-from fastapi import APIRouter, HTTPException
-from datetime import datetime
-from app.models.request_models import AdditionRequest
-from app.models.response_models import AdditionResponse
-from app.views.addition import perform_addition
+import multiprocessing
+import logging
+from typing import List
 
-router = APIRouter()
+logger = logging.getLogger(__name__)
 
-@router.post("/add", response_model=AdditionResponse)
-async def add_numbers(request: AdditionRequest):
-    started_at = datetime.utcnow()
+def add_lists(lists: List[List[int]]) -> List[int]:
+    return [sum(lst) for lst in lists]
+
+def addition_worker(payload: List[List[int]], return_dict):
+    logger.info("Starting addition_worker")
     try:
-        result = perform_addition(request.payload)
+        result = add_lists(payload)
+        return_dict['result'] = result
     except Exception as e:
-        raise HTTPException(status_code=500, detail=str(e))
-    
-    completed_at = datetime.utcnow()
-    response = AdditionResponse(
-        batchid=request.batchid,
-        response=result,
-        status="complete",
-        started_at=started_at,
-        completed_at=completed_at
-    )
-    return response
+        logger.error(f"Error in addition_worker: {e}")
+        return_dict['error'] = str(e)
+    logger.info("Finished addition_worker")
