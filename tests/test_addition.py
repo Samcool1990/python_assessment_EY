@@ -30,3 +30,4 @@ def test_addition_empty_payload():
     assert response.status_code == 200
     json_response = response.json()
     assert json_response["response"] == []
+
